@@ -86,28 +86,26 @@ class ModuleSeedCommand extends Command
         $module = $this->module->where('slug', $slug);
         $params = [];
         $namespacePath = $this->module->getNamespace();
-        $rootSeeder = $module['basename'].'DatabaseSeeder';
+        $rootSeeder = 'DatabaseSeeder';
         $fullPath = $namespacePath.'\\'.$module['basename'].'\Database\Seeds\\'.$rootSeeder;
 
-        if (class_exists($fullPath)) {
-            if ($this->option('class')) {
-                $params['--class'] = $this->option('class');
-            } else {
-                $params['--class'] = $fullPath;
-            }
-
-            if ($option = $this->option('database')) {
-                $params['--database'] = $option;
-            }
-
-            if ($option = $this->option('force')) {
-                $params['--force'] = $option;
-            }
-
-            $this->call('db:seed', $params);
-
-            event($slug.'.module.seeded', [$module, $this->option()]);
+        if ($this->option('class')) {
+            $params['--class'] = $this->option('class');
+        } else {
+            $params['--class'] = $fullPath;
         }
+
+        if ($option = $this->option('database')) {
+            $params['--database'] = $option;
+        }
+
+        if ($option = $this->option('force')) {
+            $params['--force'] = $option;
+        }
+
+        $this->call('db:seed', $params);
+
+        event($slug.'.module.seeded', [$module, $this->option()]);
     }
 
     /**
